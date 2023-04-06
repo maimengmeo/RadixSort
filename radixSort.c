@@ -2,22 +2,24 @@
 #include <stdlib.h>
 #include <time.h>
 
-int* generateArray();
+int* generateArray(int);
 void display(int*, int);
-int findBiggest(int*);
+int findBiggest(int*, int);
 int getNumberOfRun();
 void radixSort();
 
 int main (int argc, char* argv[]) {
-    int* array  = generateArray();
+    int size = 1000;
+    int* array  = generateArray(size);
     display(array, 1000);
+    printf("Biggest number is: %d\n", findBiggest(array, size)) ;
 }
 
-int* generateArray() {
-    int* array = malloc(1000 * sizeof(int));
+int* generateArray(int size) {
+    int* array = malloc(size * sizeof(int));
     srand(time(NULL));
 
-    for (int i = 0; i < 1000; i++) {
+    for (int i = 0; i < size; i++) {
         array[i] = rand();
     }
 
@@ -31,4 +33,13 @@ void display(int* array, int size) {
     printf("\n");
 }
 
-int findBiggest()
+int findBiggest(int* array, int size) {
+    int biggest = array[0];
+    for (int i = 0; i < size - 1; i++) {       
+        if (array[i+1] > biggest) {
+            biggest = array[i];
+        }
+    }
+
+    return biggest;
+}
