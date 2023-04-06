@@ -13,6 +13,7 @@ int main (int argc, char* argv[]) {
     int* array  = generateArray(size);
     display(array, 1000);
     printf("Biggest number is: %d\n", findBiggest(array, size)) ;
+    printf("Number of run: %d\n", getNumberOfRun(array, size));
 }
 
 int* generateArray(int size) {
@@ -43,3 +44,18 @@ int findBiggest(int* array, int size) {
 
     return biggest;
 }
+
+int getNumberOfRun(int* array, int size) {
+    int biggest = findBiggest(array, size);
+    int run = 0;
+
+    while (biggest != 0)
+    {
+        biggest = biggest/10;
+        run++;
+    }
+
+    return run;
+    
+}
+
