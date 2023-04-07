@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <assert.h>
 
 typedef struct node_def {
     int number;
@@ -16,12 +17,11 @@ typedef struct {
 int* generateArray(int);
 void display(int*, int);
 int findBiggest(int*, int);
-int getNumberOfRun();
-void radixSort(int*, int);
+int getNumberOfRun(int*, int);
+void radixSort(int*, int, int);
 
 void enqueue(Queue*, int);
 int dequeue(Queue*);
-void printQueue(Queue*);
 void initQueue(Queue*);
 static Node* createNewNode(int);
 
@@ -30,9 +30,14 @@ static Node* createNewNode(int);
 int main (int argc, char* argv[]) {
     int size = 1000;
     int* array  = generateArray(size);
+    int runs = getNumberOfRun(array, size);
+    int biggestNumber = findBiggest(array, size);
+
     display(array, 1000);
-    printf("Biggest number is: %d\n", findBiggest(array, size)) ;
-    printf("Number of run: %d\n", getNumberOfRun(array, size));
+    printf("Biggest number is: %d\n", biggestNumber) ;
+    printf("Number of run: %d\n", runs);
+    radixSort(array, size, runs);
+    display(array, 1000);
 }
 
 int* generateArray(int size) {
@@ -55,8 +60,9 @@ void display(int* array, int size) {
 
 int findBiggest(int* array, int size) {
     int biggest = array[0];
-    for (int i = 0; i < size - 1; i++) {       
-        if (array[i+1] > biggest) {
+
+    for (int i = 0; i < size; i++) {       
+        if (array[i] > biggest) {
             biggest = array[i];
         }
     }
@@ -77,8 +83,34 @@ int getNumberOfRun(int* array, int size) {
     return run;   
 }
 
-void radixSort(int* array, int size) {
+void radixSort(int* array, int size, int runs) {
+    Queue queues[10]; //10 digits from 0-9
+    for (int i = 0; i < 10; i++) {
+        Queue newQueue;
+        initQueue(&newQueue);
+        queues[i] = newQueue;
+    }
+    int modulous = 10;
+    int divisor = 1;
+    
+    for (int i = 0; i < runs; i++) {
+        for (int j = 0; j < size; j++) {
+            int digit = (array[j]%modulous)/divisor;
+            enqueue(&queues[digit], array[j]);
+        }
 
+        //dequeue, place elements back to the array in descending order base on the digit of this run
+        int index = 0;
+        for (int j = 0; j < 10; j++) {
+            while(queues[j].nodeCount > 0) {
+                array[index] = dequeue(&queues[j]);
+                index++;
+            }
+        }
+
+        modulous *= 10;
+        divisor *= 10;
+    }
 }
 
 static Node* createNewNode(int num) {
@@ -113,7 +145,7 @@ int dequeue(Queue * queue) {
         //delete the head
         temp = queue->head;
         num = queue->head->number;
-        queue->head == queue->head->next;
+        queue->head = queue->head->next;
         queue->nodeCount--;
         free(temp);
     } else {
@@ -130,17 +162,3 @@ void initQueue(Queue *queue) {
     queue->tail = NULL;
 }
 
-void printQueue(Queue *queue) {
-    Node *current = queue->head;
-
-    if (queue->head == NULL) {
-        printf("empty queue\n");
-    }
-    else{
-        for (int i = 0; i < queue->nodeCount; i++) {
-            printf("%d", current->number);
-            current = current ->next;
-        }
-        printf("\n");
-    }
-}
