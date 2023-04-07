@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <assert.h>
+#include <limits.h>
 
 typedef struct node_def {
     int number;
@@ -33,11 +34,12 @@ int main (int argc, char* argv[]) {
     int runs = getNumberOfRun(array, size);
     int biggestNumber = findBiggest(array, size);
 
-    display(array, 1000);
+    display(array, size);
     printf("Biggest number is: %d\n", biggestNumber) ;
     printf("Number of run: %d\n", runs);
     radixSort(array, size, runs);
-    display(array, 1000);
+    display(array,size);
+
 }
 
 int* generateArray(int size) {
@@ -45,7 +47,7 @@ int* generateArray(int size) {
     srand(time(NULL));
 
     for (int i = 0; i < size; i++) {
-        array[i] = rand();
+       array[i] = rand();
     }
 
     return array;
@@ -94,18 +96,22 @@ void radixSort(int* array, int size, int runs) {
     int divisor = 1;
     
     for (int i = 0; i < runs; i++) {
+        
         for (int j = 0; j < size; j++) {
-            int digit = (array[j]%modulous)/divisor;
+            int digit = (array[j]/divisor) % 10;
+
             enqueue(&queues[digit], array[j]);
         }
 
         //dequeue, place elements back to the array in descending order base on the digit of this run
         int index = 0;
+
         for (int j = 0; j < 10; j++) {
+ 
             while(queues[j].nodeCount > 0) {
                 array[index] = dequeue(&queues[j]);
                 index++;
-            }
+            }   
         }
 
         modulous *= 10;
