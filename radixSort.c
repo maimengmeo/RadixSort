@@ -18,27 +18,19 @@ typedef struct {
 int* generateArray(int);
 void display(int*, int);
 int findBiggest(int*, int);
-int getNumberOfRun(int*, int);
-void radixSort(int*, int, int);
+int getNumberOfRuns(int*, int);
+void radixSort(int*, int);
 
 void enqueue(Queue*, int);
 int dequeue(Queue*);
 void initQueue(Queue*);
 static Node* createNewNode(int);
 
-
-
 int main (int argc, char* argv[]) {
     int size = 1000;
     int* array  = generateArray(size);
-    int runs = getNumberOfRun(array, size);
-    int biggestNumber = findBiggest(array, size);
-
+    radixSort(array, size);
     display(array, size);
-    printf("Biggest number is: %d\n", biggestNumber) ;
-    printf("Number of run: %d\n", runs);
-    radixSort(array, size, runs);
-    display(array,size);
 
 }
 
@@ -72,7 +64,7 @@ int findBiggest(int* array, int size) {
     return biggest;
 }
 
-int getNumberOfRun(int* array, int size) {
+int getNumberOfRuns(int* array, int size) {
     int biggest = findBiggest(array, size);
     int run = 0;
 
@@ -85,7 +77,10 @@ int getNumberOfRun(int* array, int size) {
     return run;   
 }
 
-void radixSort(int* array, int size, int runs) {
+void radixSort(int* array, int size) {
+    
+    int runs = getNumberOfRuns(array, size);
+    
     Queue queues[10]; //10 digits from 0-9
     for (int i = 0; i < 10; i++) {
         Queue newQueue;
